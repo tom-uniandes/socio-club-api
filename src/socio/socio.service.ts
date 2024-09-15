@@ -22,4 +22,18 @@ export class SocioService {
    
         return socio;
     }
+
+    async create(socio: SocioEntity): Promise<SocioEntity> {
+        this.validateEmail(socio.correo_electronico);
+        return await this.socioRepository.save(socio);
+    }
+
+    validateEmail(email: string) {
+        if (!email.includes('@')) {
+            throw new BusinessLogicException(
+                "The email is not valid. It must contain '@'.", 
+                BusinessError.BAD_REQUEST
+            );
+        }
+    }
 }

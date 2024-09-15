@@ -22,4 +22,18 @@ export class ClubService {
    
         return club;
     }
+
+    async create(club: ClubEntity): Promise<ClubEntity> {
+        this.validateDescription(club.descripcion);
+        return await this.clubRepository.save(club);
+    }
+
+    validateDescription(description: string) {
+        if (description.length > 100) {
+            throw new BusinessLogicException(
+                "The description can not exceed 100 characters.", 
+                BusinessError.BAD_REQUEST
+            );
+        }
+    }
 }
