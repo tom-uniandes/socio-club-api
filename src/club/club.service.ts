@@ -37,6 +37,14 @@ export class ClubService {
         return await this.clubRepository.save({...persistedClub, ...club});
     }
 
+    async delete(id: string) {
+        const club: ClubEntity = await this.clubRepository.findOne({where:{id}});
+        if (!club)
+          throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND);
+     
+        await this.clubRepository.remove(club);
+    }
+
     validateDescription(description: string) {
         if (description.length > 100) {
             throw new BusinessLogicException(

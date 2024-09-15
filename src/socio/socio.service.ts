@@ -37,6 +37,14 @@ export class SocioService {
         return await this.socioRepository.save({...persistedSocio, ...socio});
     }
 
+    async delete(id: string) {
+        const socio: SocioEntity = await this.socioRepository.findOne({where:{id}});
+        if (!socio)
+          throw new BusinessLogicException("The socio with the given id was not found", BusinessError.NOT_FOUND);
+     
+        await this.socioRepository.remove(socio);
+    }
+
     validateEmail(email: string) {
         if (!email.includes('@')) {
             throw new BusinessLogicException(
