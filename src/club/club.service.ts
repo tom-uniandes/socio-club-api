@@ -28,6 +28,15 @@ export class ClubService {
         return await this.clubRepository.save(club);
     }
 
+    async update(id: string, club: ClubEntity): Promise<ClubEntity> {
+        const persistedClub: ClubEntity = await this.clubRepository.findOne({where:{id}});
+        if (!persistedClub)
+          throw new BusinessLogicException("The club with the given id was not found", BusinessError.NOT_FOUND);
+        
+        this.validateDescription(club.descripcion);
+        return await this.clubRepository.save({...persistedClub, ...club});
+    }
+
     validateDescription(description: string) {
         if (description.length > 100) {
             throw new BusinessLogicException(
