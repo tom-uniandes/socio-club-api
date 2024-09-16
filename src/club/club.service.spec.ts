@@ -81,5 +81,23 @@ describe('ClubService', () => {
     expect(club.descripcion).toEqual(storedClub.descripcion)
     expect(club.socios).toEqual(club.socios)
   });
+
+  it('update should modify a club', async () => {
+    const club: ClubEntity = clubsList[0];
+    club.nombre = "New name";
+     const updatedClub: ClubEntity = await service.update(club.id, club);
+    expect(updatedClub).not.toBeNull();
+     const storedClub: ClubEntity = await repository.findOne({ where: { id: club.id } })
+    expect(storedClub).not.toBeNull();
+    expect(storedClub.nombre).toEqual(club.nombre)
+  });
+
+  it('update should throw an exception for an invalid club', async () => {
+    let club: ClubEntity = clubsList[0];
+    club = {
+      ...club, nombre: "New name"
+    }
+    await expect(() => service.update("0", club)).rejects.toHaveProperty("message", "The club with the given id was not found")
+  });
 });
 

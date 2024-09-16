@@ -75,4 +75,22 @@ describe('SocioService', () => {
     expect(socio.correo_electronico).toEqual(storedSocio.correo_electronico)
     expect(socio.fecha_nacimiento).toEqual(storedSocio.fecha_nacimiento)
   });
+
+  it('update should modify a socio', async () => {
+    const socio: SocioEntity = sociosList[0];
+    socio.nombre_usuario = "New user";
+     const updatedSocio: SocioEntity = await service.update(socio.id, socio);
+    expect(updatedSocio).not.toBeNull();
+     const storedSocio: SocioEntity = await repository.findOne({ where: { id: socio.id } })
+    expect(storedSocio).not.toBeNull();
+    expect(storedSocio.nombre_usuario).toEqual(socio.nombre_usuario)
+  });
+
+  it('update should throw an exception for an invalid socio', async () => {
+    let socio: SocioEntity = sociosList[0];
+    socio = {
+      ...socio, nombre_usuario: "New user"
+    }
+    await expect(() => service.update("0", socio)).rejects.toHaveProperty("message", "The socio with the given id was not found")
+  });
 });
