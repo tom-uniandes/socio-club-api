@@ -44,5 +44,42 @@ describe('ClubService', () => {
     expect(clubs).not.toBeNull();
     expect(clubs).toHaveLength(clubsList.length);
   });
+
+  it('findOne should return a club by id', async () => {
+    const storedClub: ClubEntity = clubsList[0];
+    const club: ClubEntity = await service.findOne(storedClub.id);
+    expect(club).not.toBeNull();
+    expect(club.nombre).toEqual(storedClub.nombre)
+    expect(club.fecha_fundacion).toEqual(storedClub.fecha_fundacion)
+    expect(club.imagen).toEqual(storedClub.imagen)
+    expect(club.descripcion).toEqual(storedClub.descripcion)
+    expect(club.socios).toEqual(club.socios)
+  });
+
+  it('findOne should throw an exception for an invalid club', async () => {
+    await expect(() => service.findOne("0")).rejects.toHaveProperty("message", "The club with the given id was not found")
+  });
+
+  it('create should return a new club', async () => {
+    const club: ClubEntity = {
+      id: "",
+      nombre: faker.company.name(),
+      fecha_fundacion: faker.date.anytime(),
+      imagen: faker.image.url(),
+      descripcion: faker.word.words(2),
+      socios: []
+    }
+ 
+    const newClub: ClubEntity = await service.create(club);
+    expect(newClub).not.toBeNull();
+ 
+    const storedClub: ClubEntity = await repository.findOne({where: {id: newClub.id}})
+    expect(club).not.toBeNull();
+    expect(club.nombre).toEqual(storedClub.nombre)
+    expect(club.fecha_fundacion).toEqual(storedClub.fecha_fundacion)
+    expect(club.imagen).toEqual(storedClub.imagen)
+    expect(club.descripcion).toEqual(storedClub.descripcion)
+    expect(club.socios).toEqual(club.socios)
+  });
 });
 

@@ -43,4 +43,36 @@ describe('SocioService', () => {
     expect(socios).not.toBeNull();
     expect(socios).toHaveLength(sociosList.length);
   });
+
+  it('findOne should return a socio by id', async () => {
+    const storedSocio: SocioEntity = sociosList[0];
+    const socio: SocioEntity = await service.findOne(storedSocio.id);
+    expect(socio).not.toBeNull();
+    expect(socio.nombre_usuario).toEqual(storedSocio.nombre_usuario)
+    expect(socio.correo_electronico).toEqual(storedSocio.correo_electronico)
+    expect(socio.fecha_nacimiento).toEqual(storedSocio.fecha_nacimiento)
+  });
+
+  it('findOne should throw an exception for an invalid socio', async () => {
+    await expect(() => service.findOne("0")).rejects.toHaveProperty("message", "The socio with the given id was not found")
+  });
+
+  it('create should return a new socio', async () => {
+    const socio: SocioEntity = {
+      id: "",
+      nombre_usuario: faker.person.firstName(),
+      correo_electronico: faker.internet.email(),
+      fecha_nacimiento: faker.date.anytime(),
+      clubes: []
+    }
+ 
+    const newSocio: SocioEntity = await service.create(socio);
+    expect(newSocio).not.toBeNull();
+ 
+    const storedSocio: SocioEntity = await repository.findOne({where: {id: newSocio.id}})
+    expect(socio).not.toBeNull();
+    expect(socio.nombre_usuario).toEqual(storedSocio.nombre_usuario)
+    expect(socio.correo_electronico).toEqual(storedSocio.correo_electronico)
+    expect(socio.fecha_nacimiento).toEqual(storedSocio.fecha_nacimiento)
+  });
 });
