@@ -93,4 +93,15 @@ describe('SocioService', () => {
     }
     await expect(() => service.update("0", socio)).rejects.toHaveProperty("message", "The socio with the given id was not found")
   });
+
+  it('delete should remove a socio', async () => {
+    const socio: SocioEntity = sociosList[0];
+    await service.delete(socio.id);
+     const deletedSocio: SocioEntity = await repository.findOne({ where: { id: socio.id } })
+    expect(deletedSocio).toBeNull();
+  });
+
+  it('delete should throw an exception for an invalid socio', async () => {
+    await expect(() => service.delete("0")).rejects.toHaveProperty("message", "The socio with the given id was not found")
+  });
 });

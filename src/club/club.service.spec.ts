@@ -99,5 +99,16 @@ describe('ClubService', () => {
     }
     await expect(() => service.update("0", club)).rejects.toHaveProperty("message", "The club with the given id was not found")
   });
+
+  it('delete should remove a club', async () => {
+    const club: ClubEntity = clubsList[0];
+    await service.delete(club.id);
+     const deletedClub: ClubEntity = await repository.findOne({ where: { id: club.id } })
+    expect(deletedClub).toBeNull();
+  });
+
+  it('delete should throw an exception for an invalid club', async () => {
+    await expect(() => service.delete("0")).rejects.toHaveProperty("message", "The club with the given id was not found")
+  });
 });
 
